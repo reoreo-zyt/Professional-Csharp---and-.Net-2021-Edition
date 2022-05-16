@@ -45,7 +45,7 @@ Precisamos de chinês
 
 * 书籍整体目录结构大纲
 * 第 1 章：.Net 应用程序和工具
-  * 从 .Net Framework 到 .Net Core 再到 .Net Terms
+  * 从 .Net Framework 到 .Net Core 再到 .Net 术语
     * .Net SDK（**Software Development Kit**，软件开发工具包）
     * .Net 运行时（.Net Runtime）
     * CLR（Common Langurage Runtime 公共语言运行库）
