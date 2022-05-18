@@ -22,7 +22,7 @@
 
 ## 从 .Net Framework 到 .Net Core 再到 .Net 术语
 
-.NET的第一个版本于2002年发布。自第一个版本以来，许多特性都发生了变化。.NET的第一个时代是.NET Framework，它为Windows桌面应用程序和Web应用程序提供了窗体开发。这个版本的.NET只适用于微软的Windows系统。当时，微软还在ECMA(https://www.ecma-international.org/publications/standards/Ecma-334.htm)上创造了一个c#的标准。
+.NET的第一个版本于2002年发布。自第一个版本以来，许多特性都发生了变化。.NET的第一个时代是.NET Framework，它为Windows桌面应用程序和Web应用程序提供了窗体开发。这个版本的.NET只适用于微软的Windows系统。当时，微软还在ECMA(https://www.ecma-international.org/publications/standards/Ecma-334.htm)上创造了一个C#的标准。
 
 后来，Microsoft Silverlight 使用了这种技术的一个子集，并使用浏览器插件在浏览器中运行有限的库和运行时。当时，Ximian公司开发了Mono 运行时。这个运行时可用于Linux和Android，并提供了微软的一个子集。净的功能。后来，Novell收购了Ximian，后来又被附属集团收购。随着新团体对.NET失去兴趣，米格尔·德·伊卡扎(Ximian的创始人)创办了Xamarin，并将有趣的.NET部分带到他的新团体中，为安卓和iOS系统创建了.NET。如今，Xamarin属于微软，而Mono运行时是dotnet运行时 (https://github.com/dotnet/runtime）的一部分。
 
@@ -245,3 +245,154 @@ IL代码由CLR编译为本机代码。.NET程序集中可用的IL代码是由一
 使用MVVM模式创建具有XAML代码的WinUI应用程序将在第30章“具有XAML应用程序的模式”以及后面的章节中介绍。
 
 > **注意**：创建WinUI应用程序详见第30章，其中介绍了XAML、不同的XAML控件和应用程序的生命周期。通过支持MVVM模式，您可以使用WinUI、WPF、UWP、Xamanrin平台和Maui创建应用程序。第30章将介绍此模式。要创造很酷的外观和风格的应用程序，请务必阅读第31章，“造型窗口应用程序”。最后，第32章“高级Windows应用程序”深入介绍了Windows应用程序的一些高级功能。
+
+
+
+### Web 应用
+
+对于使用.Net创建web应用程序，有几个选项可用。使用应用程序结构实现MVC模式的一种技术是ASP.NET Core MVC。如果你有一个现有的ASP.NET MVC项目，迁移到ASP.NET Core MVC应该不会太难。
+
+ASP.NET Core Razor Pages与MVC模式相比，提供了一个更简单的选项。Razor Pages可以使用后面的代码，或将c#代码与HTML页面混合。这个解决方案更容易接受，而且它也可以与MVC一起使用。Razor Pages的依赖注入特性使创建可重用代码变得容易。
+
+ASP.NET Core Blazor是一种用于摆脱JavaScript代码的新技术。使用服务器端变体，用户界面事件将在服务器上处理。客户端和服务器在幕后使用SignalR持续连接。Blazor的另一个变体是在客户端上使用WebAssembly。这样，您就可以使用c#、HTML和CSS在客户端中编写运行二进制文件的代码。因为WebAssembly是HTML5的标准版本，所以Blazor可以在所有现代浏览器中运行，而不需要添加插件。
+
+ASP.NET从根本上改变了web编程模式。ASP.NET Core再次改变了它。ASP.NET Core允许使用.NET Core来实现高性能和可伸缩性，它不仅在Windows上运行，还能在Linux系统上运行。
+
+使用 ASP.NET Core，ASP.NET Web Forms不再被覆盖。(ASP.NET Web Forms仍然可以使用，并使用.NET4.7进行更新。)
+
+ASP.NET Core MVC是基于众所周知的MVC模式，以便于更容易地进行单元测试。它还允许使用HTML、CSS和JavaScript明确地分离编写用户界面代码，并且在后端使用C#。
+
+> **注意**：第24章，*“ASP.NET Core,”* 涵盖了*ASP.NET Core*的基础。第26章，“*Razor Pages和MVC”，继续描述了基础，并添加了使用*Razor Pages，*Razor Views*，和 *ASP.NET Core MVC*框架。第27章，“Blazor”，继续使用Razor组件，并涵盖了为Blazor服务端和*Blazor WebAssembly*而进行的开发
+
+
+
+### 服务端
+
+SOAP（Simple Object Access Protocol，简单对象访问协议）和WCF（ Windows Communication Foundation）在过去履行了他们的职责。现代应用程序使用了 Representational State Transfer(REST)和Web API。使用 ASP.NET Core创建WebAPI是一个更容易进行通信的选项，并且可以满足分布式应用程序90%以上的需求。该技术基于REST，它为无状态和可伸缩的web服务定义了指导方针和最佳实践。
+
+客户端可以接收JSON或XML数据。JSON和XML也可以以一种使用Open Data(OData)规范的方式进行格式化。
+
+这个新API的特性使得使用JavaScript、.NET和其他技术从web客户端使用更容易。
+
+创建Web API是创建微服务的一种好方法。构建微服务的方法定义了可以独立运行和部署的较小的服务，并对数据存储有自己的控制。
+
+为了描述这些服务，开发了一个新的标准——OpenAPI(https://www.openapis.org)，它的根源是Swagger(https://swagger.io/)。
+
+对于像通信这样的远程过程调用(RPC)，您可以使用gRPC，它提供了一个基于HTTP/2的二进制通信，可以在不同的平台上使用。
+
+> 注意ASP.NET Core Web API、OpenAPI、gRPC以及更多关于微服务的信息将在第25章“服务端”中介绍。
+
+
+
+### SignalR
+
+对于实时web功能的客户端和服务器之间的双向通信，SignalR是一个ASP.NET Core技术。SignalR允许在信息可用时立即将信息推送到已连接的客户端。SignalR利用WebSocket技术来推送信息。
+
+> **注意**：SignalR连接管理、连接分组和流的基础将在第28章“SignalR”中有讨论。
+
+
+
+### 微软 Azure
+
+现在，在考虑开发图片时，你不能忽视云服务。虽然这本书没有包括关于云技术的专门章节，但微软Azure在这本书的几章中都被提及。
+
+微软Azure提供软件即服务(SaaS)、基础设施即服务(IaaS)、平台即服务(PaaS)和功能即服务(FaaS)，有时提供的服务介于这些类别之间。让我们来看看一些微软的Azure产品。
+
+
+
+#### 软件即服务(SaaS)
+
+SaaS提供完整的软件；您不需要处理服务器、更新等的管理。Office365是通过云服务使用电子邮件和其他服务的SaaS服务之一。与开发人员相关的SaaS服务是Azure DevOps服务。Azure DevOps服务是Azure DevOps服务器（以前称为团队基础服务器）的云版本，可以用于私有和公共代码存储库，用于跟踪bug和工作项，以及用于构建和测试服务。微软在这方面的另一个产品是GitHub，它经过增强，可以从AzureDevOps获得许多功能。
+
+
+
+#### 基础设施即服务(IaaS)
+
+另一项服务是IaaS。此服务产品中包含了虚拟机。您将负责管理操作系统和维护更新。当您创建虚拟机时，您可以在不同的硬件产品之间做出选择，从共享内核开始到416核（在撰写本文时，但情况变化很快）。M系列机器包括416核，11.4TB RAM和8TB本地SSD。
+
+使用预装的操作系统，您可以在预装了SQL服务器、BizTalk服务器、SharePoint、Oracle等许多其他产品的操作系统之间进行选择。
+
+我经常使用虚拟机来处理我每周只需要几个小时的环境，因为虚拟机是每小时付费的。如果您想尝试在Linux上编译和运行.NET Core程序，但没有Linux机器，那么在微软Azure上安装这样的环境是一个简单的任务。
+
+
+
+#### 平台即服务(PaaS)
+
+对于开发人员来说，微软Azure最相关的部分是平台即服务(PaaS)。您可以访问用于存储和读取数据的服务，使用应用程序服务的计算和网络功能，并在应用程序中集成开发者服务。
+
+为了在云中存储数据，您可以使用关系数据存储SQL Database。SQL Database几乎与SQL Server的内部版本相同。还有一些NoSQL解决方案，如CosmosDB，具有不同的存储选项，如JSON数据、关系或表存储，以及存储团（例如，对于图像或视频）的Azure Storage。
+
+应用程序服务可以用来托管你的web应用程序和你使用ASP.NET Core创建的API。
+
+除了之前引入的VisualStudio团队服务，微软Azure中开发服务的另一部分是应用程序洞察。随着发布周期的加快，获取有关用户如何使用该应用程序的信息变得越来越重要。哪些菜单因为用户可能找不到而没有使用？用户在应用程序中通过什么路径来完成任务？通过应用程序洞察力，您可以获得良好的匿名用户信息，以了解用户对应用程序存在的问题，并且有了DevOps，您就可以进行快速修复。
+
+您还可以使用提供处理图像功能的认知服务，使用Bing搜索api，理解用户对语言服务的看法，等等。
+
+
+
+#### 函数即服务(FaaS)
+
+FaaS，也被称为Azure无服务器的类别，是云服务的一个新概念。当然，在幕后总有一个服务器。你只是不支付保留的CPU和内存，因为它们是用web应用程序使用的应用服务来处理的。相反，你是根据消费来支付的——对活动所需的内存和所需时间的一些限制。Azure功能技术是一种可以使用FaaS进行部署的技术。
+
+> **注意**：第15章“依赖注入和配置”，不仅描述了定义.NET应用程序配置的架构，还涵盖了使用这种配置方法来访问微软Azure应用程序配置和Azure密钥库所需要的内容。第16章，“诊断和度量”，涵盖了使用Azure监视器，以及第21章展示了如何使用本地SQL数据库和Azure SQL访问关系数据库。它还展示了如何使用*EF Core*来访问Azure Cosmos NoSQL数据库。第25章使用Azure应用程序服务和Azure函数进行部署选项。
+
+
+
+## 开发人员工具
+
+对于开发，您需要一个SDK来构建应用程序并测试它们，而且您需要一个代码编辑器。其他一些工具也可以提供帮助，比如Windows系统上的Linux环境和运行Docker映像的环境。让我们开始安装使用一些实用的工具。
+
+
+
+### .NET CLI
+
+对于开发，您需要.NET SDK。如果您正在使用Visual Studio进行开发，则.NET SDK将与VisualStudio一起安装。如果您使用的是不同的环境，或者您希望安装不属于Visual Studio安装范围的不同版本，那么您可以从https://dot.net下载SDK。在这里，您可以下载和安装针对不同平台的SDK发行版。
+
+SDK的一部分是.NET CLI——用于开发.NET应用程序的命令行接口。您可以使用.NETCLI来创建新的应用程序、编译应用程序、运行单元测试、创建NuGet软件包，以及创建发布所需的文件。除此之外，您还可以使用任何编辑器，如记事本来编写代码。当然，如果您可以访问其他提供智能感知的工具，那么使用它们可以使运行和调试应用程序更容易。
+
+本章后面的“使用.NET CLI”一节将介绍.NET CLI
+
+
+
+### Visual Studio Code
+
+Visual Studio Code是一个轻量级的编辑器，不仅可以在Windows上使用，也可以在Linux和macOS上使用。该社区创建了大量的扩展，使Visual Studio Code成为许多技术的首选环境。
+
+在本书的许多章节中，您可以使用Visual Studio Code作为开发编辑器。您目前不能做的是创建WinUI和Xamarin应用程序。您可以创建.NET Core控制台应用程序和ASP.NET Core应用程序。
+
+您可以从http://code.visualstudio.com下载Visual Studio Code。
+
+
+
+### Visual Studio Community
+
+这个版本的Visual Studio是一个免费版本，具有专业版本以前拥有的功能，但有一个关于何时可以使用的许可限制。它对开源项目、培训以及学术和小型专业团队都是免费的。与以前一直是免费版本的Visual Studio Express不同，该产品允许与Visual Studio一起使用扩展。
+
+
+
+### Visual Studio Professional
+
+Visual Studio专业版包括比社区版更多的功能，例如用于源代码管理和团队协作的代码镜头和团队基础服务器。有了这个版本，您还可以获得订阅，其中包括微软用于开发和测试的服务器产品，以及可以使用微软Azure用于开发和测试的免费次数。
+
+
+
+### Visual Studio Enterprise
+
+与专业版不同，Visual Studio企业版包含了许多用于测试的工具，如实时单元测试、微软伪造（单元测试隔离）和智能测试(单元测试是所有Visual Studio版本的一部分)。使用代码克隆，您可以在解决方案中找到类似的代码。Visual Studio企业还包含体系结构和建模工具来分析和验证解决方案体系结构。
+
+> **注意**：通过Visual Studio订阅，您有权免费使用微软Azure的每月限额，这取决于您的Visual Studio订阅类型
+
+> **注意**：注意：对于本书中的一些特性——例如，简要说明的实时单元测试——您需要VisualStudio企业版。但是，您可以使用VisualStudio社区版来完成这本书的大部分内容。
+
+
+
+### Visual Studio for Mac
+
+Mac的Visual Studio起源于Xamarin工作室，但现在它比早期的产品功能要多得多。Mac的Visual Studio的实际版本使用的编辑器与Visual Studios版本的源代码相同。使用Visual Studio for Mac，你不仅可以创建Xamarin应用程序，还可以创建ASP.NET Core应用程序。运行在Windows、Linux和Mac上。在这本书的许多章节，你可以使用Visual Studio for Mac。例外的是关于WinUI的章节（第29章到第31章），它要求使用Windows运行和开发该应用程序。
+
+
+
+### Windows 终端
+
+经过这么多年没有更改Windows命令提示符之后，现在有了一个全新的提示符。源代码在https://github.com/Microsoft/terminal上是公开的，它提供了许多对开发有用的特性。该终端提供了多个选项卡和不同的外壳，如WindowsPowerShell、命令提示符、Azure云外壳和WSL2环境。您可以让终端全屏，打开不同的选项卡以保持不同的文件夹易于访问，也可以分割窗格以在一个屏幕中打开不同的文件夹，便于比较。每月都会添加新功能，你可以从微软商店安装终端。
+
