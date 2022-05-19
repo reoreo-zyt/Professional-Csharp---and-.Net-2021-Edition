@@ -396,3 +396,364 @@ Mac的Visual Studio起源于Xamarin工作室，但现在它比早期的产品功
 
 经过这么多年没有更改Windows命令提示符之后，现在有了一个全新的提示符。源代码在https://github.com/Microsoft/terminal上是公开的，它提供了许多对开发有用的特性。该终端提供了多个选项卡和不同的外壳，如WindowsPowerShell、命令提示符、Azure云外壳和WSL2环境。您可以让终端全屏，打开不同的选项卡以保持不同的文件夹易于访问，也可以分割窗格以在一个屏幕中打开不同的文件夹，便于比较。每月都会添加新功能，你可以从微软商店安装终端。
 
+
+
+### WSL 2
+
+WSL2是针对Linux的第二代Windows子系统。这样，运行Linux的子系统不仅更快，而且还提供了几乎所有的Linux api。
+
+使用WSL2，您可以从微软商店安装不同的Linux发行版。如果您使用Windows终端，则可以为每个已安装的Linux发行版打开不同的选项卡。
+
+WSL2为您提供了一种简单的方法，可以从Windows系统使用Linux环境中构建和运行.NET应用程序。您甚至可以在Linux环境中运行时使用Visual Studio来调试.NET应用程序。您只需要安装使用WSL2的扩展.NET Core Debugging。当您从Visual Studio运行调试会话时，.NET SDK会自动安装在您的WSL2环境中。
+
+
+
+### Docker 桌面应用程序
+
+针对Linux的Docker桌面应用程序(你可以从https://hub.docker.com/editions/community/文档-桌面窗口安装它)允许运行针对Linux或窗口的Docker容器。使用Docker允许基于包含.NET运行时的镜像创建包含应用程序代码的镜像。.NET运行时本身是基于Linux或Windows镜像。
+
+您可以使用Docker来使用运行在多个Docker容器中的.NET服务来创建解决方案。Docker容器是运行Docker镜像，您可以通过Visual Studio或dotnet网络工具如tye(https://github.com/dotnet/tye)来构建。
+
+> 注意：在第25章中介绍创建Docker容器并运行它们。
+
+
+
+## 使用 .Net CLI
+
+在这本书中有很多章节，你不需要Visual Studio。相反，您可以使用任何编辑器和命令行，例如.NET CLI。让我们来看看如何设置您的系统，以及如何使用这个工具。这在所有平台上都是一样的。
+
+现在，专注于命令行也是致力于CI/CD。您可以创建一个在后台自动进行编译、测试和部署的渠道。
+
+如果您安装了.NET CLI工具，您将作为启动所有这些工具的入口点。使用命令：
+
+```bash
+dotnet --help
+```
+
+![image-20220519083043861](imgs/image-20220519083043861.png)
+
+查看可用的网络网络工具的所有不同选项。许多选项都有一个速记符号。对于帮助，您也可以输入
+
+```bash
+dotnet -h
+```
+
+
+
+### 创建应用程序
+
+dotnet工具提供了一个简单的方法来创建一个“Hello,World!”，只需输入这个命令来创建一个控制台应用程序：
+
+```bash
+ dotnet new console --output HelloWorld
+```
+
+此命令创建一个新的HelloWorld目录，并添加源代码文件Program.cs和项目文件HelloWorld.csproj。命令dotnet new还包括命令dotnet restore，将所有需要的NuGet包下载。要查看应用程序所使用的库的依赖项和版本的列表，您可以检查obj子目录中的文件project.assets.json。如果不使用选项 --output（也可以使用-o作为速记），将在当前目录中生成文件。
+
+生成的源代码显示如下代码片段：
+
+```c#
+using System;
+namespace HelloWorld
+{
+ class Program
+ {
+ static void Main(string[] args)
+ {
+ Console.WriteLine("Hello World!");
+ }
+ }
+}
+```
+
+> 注意：自20世纪70年代，当布莱恩·克尼根和丹尼斯·里奇写《C编程语言》一书以来，开始使用“Hello,World”变成学习一种语言的传统。通过使用.NETCLI，此程序将自动生成。
+
+让我们进入这个程序的语法。Main方法是.NET应用程序的入口点。CLR在启动时调用一个静态的Main方法。Main方法需要放入一个类中。在这里，该类名为Program，但您可以用任何名称来调用它。
+
+Console.WriteLine调用Console类的WriteLine方法。Console类可以在System命名空间中找到。为了避免写System.Consolee.WriteLine，通过Using在顶部声明可以省略命名空间。
+
+在编写了源代码之后，您需要编译该代码来运行它。如何做到这一点将在“构建应用程序”一节中解释。
+
+已创建的项目配置文件名为HelloWorld.csproj。此文件包含项目配置，如目标框架和要创建的二进制文件的类型。此文件中的一个重要信息是对SDK(项目文件HelloWorld/HelloWorld.csproj)的引用：
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup>
+ <OutputType>Exe</OutputType>
+ <TargetFramework>net5.0</TargetFramework>
+ </PropertyGroup>
+</Project>
+```
+
+
+
+### 顶级语句
+
+C#9允许您为“Hello,World!”程序简化代码。使用顶级语句，可以删除命名空间、类和Main方法声明，以便只写入顶级语句。这个应用程序可以看起来像”这里显示的应用程序代码(代码文件HelloWorld/Program.cs)：
+
+```c#
+using System;
+Console.WriteLine("Hello World!");
+```
+
+还可以在一个代码行中编写程序：
+
+```c#
+System.Console.WriteLine("Hello World!");
+```
+
+> 注意：实际编译后，仍将创建具有顶级语句、类和主方法。查看生成的IL代码，生成一个名为<Program>$的类和一个名为<Main>$的主方法来包含顶级语句。您只需要自己编写这段代码。对于像示例应用程序这样的小型应用程序，顶级语句减少了所需的代码。当在类似脚本的环境中使用C#时，顶级语句也很实用。顶级语句将在第2章“C#基础”中更详细地讨论。
+
+
+
+### 选择框架版本和语言版本
+
+可以用目标框架替换目标框架元素，并且可以指定多个框架，如.net5和.net4.8所示。添加LangVersison元素是因为示例应用程序使用了C#9代码（顶级语句）。如果不使用这个属性，C#版本是由框架版本定义的。.NET5在默认情况下使用C#9，.NET框架4.8使用C#7.3
+
+（项目文件HelloWorld/HelloWorld.csproj）：
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup>
+ <OutputType>Exe</OutputType>
+ <TargetFrameworks>net5.0;net4.8</TargetFrameworks>
+ <LangVersion>9.0</LangVersion>
+ </PropertyGroup>
+</Project>
+```
+
+Sdk属性指定项目使用的SDK。微软提供了不同的Sdks： Microsoft.NET.Sdk用于控制台应用程序，Microsoft.NET.Sdk.Web用于ASP.NET Core web应用程序，和Microsoft.NET.Sdk.BlazorWebAssembly用于使用Blazor和WebAssembly的web应用程序。
+
+您不需要向项目中添加源文件。在同一目录和子目录中扩展名为.cs的文件将自动添加以进行编译。扩展名为.resx的资源文件将自动添加以嵌入资源。您可以更改默认行为，并显式地排除/包含文件。
+
+您也不需要添加.NET Core软件包。当您指定目标框架net5.0时，元包将为Microsoft.NETCore.App。引用许多其他软件包的应用程序会自动包含在内。
+
+
+
+### 构建应用程序
+
+要构建应用程序，您需要将当前目录更改为应用程序的目录，并启动dotnet build。您可以看到如下类似的输出，它是为.NET5.0和.NET Framework 4.8编译的：
+
+```bash
+ dotnet build
+```
+
+```
+Microsoft (R) Build Engine version 16.8.0 for .NET Copyright (C) 
+Microsoft Corporation. All rights reserved.
+ Determining projects to restore...
+ Restored C:\procsharp\Intro\HelloWorld\HelloWorld.csproj (in 308 ms).
+ HelloWorld -> C:\procsharp\Intro\HelloWorld\bin\Debug\net48\HelloWorld.exe
+ HelloWorld -> C:\procsharp\Intro\HelloWorld\bin\Debug\net5.0\HelloWorld.dll
+ Build succeeded.
+ 0 Warning(s)
+ 0 Error(s)
+Time Elapsed 00:00:02.82
+```
+
+> 注意，命令dotnet new和dotnet build自动下载NuGet包，所以你不能忘记这样做。下载NuGet软件包将从NuGet服务器或在环境中配置的其他服务器中检索项目文件中引用的库。您还可以使用dotnet restore显式地恢下载NuGet包。
+
+作为编译过程的结果，您可以在bin/debug/[net5.0|net4.8]文件夹中找到包含程序类的IL代码的程序集。如果您将.NET Core的构建与.NET 4.8进行比较，您会发现一个包含.NET Core的IL代码的DLL和一个包含.NET 4.8的IL代码的EXE。为.NET Core生成的程序集依赖于 System.Console程序集，而.NET 4.8程序集包括mscorlib程序集中的Console类。
+
+要生成版本代码，您需要指定选项——配置版本（简称-c版本）：
+
+```bash
+ dotnet build --configuration Release
+```
+
+> 注意：调试构建包括调试符号，生成的代码不会便于调试。在版本构建中，代码为生产进行了优化，并且运行得更快。在开发阶段（在交付应用程序用于生产之前），您应该尝试发行版本，因为在调试版本中可能会发现不同的行为。
+
+
+
+### 运行应用程序
+
+要运行该应用程序，您可以使用以下dotnet命令：
+
+```bash
+dotnet run
+```
+
+如果项目文件针对多个框架，您需要通过添加选项--framework来告诉dotnet run命令，使用哪个框架来运行应用程序。这个框架必须配置为csproj文件。对于示例应用程序，您应该得到应用程序的以下输出：
+
+```bash
+ dotnet run ––framework net5.0
+```
+
+```
+Hello World!
+```
+
+在生产系统上，不使用dotnet run来运行应用程序；相反，只使用带有库名称的dotnet：
+
+```bash
+ dotnet bin/debug/net5.0/HelloWorld.dll
+```
+
+编译器还创建了一个可执行文件，它只做了加载和启动库。您也可以启动该可执行文件。下一步将显示如何构建适合发布的可执行文件。
+
+> 请注意，正如你从建造和运行“Hello,World!”dotnet工具在Linux和macOS上的工作原理是一样的。您可以在任何一个平台上使用相同的.NET CLI命令。
+
+
+
+### 创建Web应用程序
+
+与创建控制台应用程序类似，您也可以使用.NET CLI来创建Web应用程序。当您输入dotnet new时，您可以看到可用的模板列表。
+
+```bash
+dotnet new webapp -o WebApp
+```
+
+创建一个新的使用Razor Pages的ASP.NET Core web应用程序
+
+所创建的项目文件现在包含了一个对 Microsoft.NET.Sdk.Web SDK的引用。此SDK包含创建web应用程序和服务所需的项目文件的工具和扩展：
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+ <PropertyGroup>
+ <TargetFramework>net5.0</TargetFramework>
+ </PropertyGroup>
+</Project>
+```
+
+现在执行：
+
+```bash
+dotnet build
+```
+
+```bash
+dotnet run
+```
+
+启动 ASP.NET Core的Kestrel服务器。侦听端口5000和5001。您可以打开一个浏览器来访问从该服务器返回的页面，如图1-2所示。
+
+![image-20220519100853012](imgs/image-20220519100853012.png)
+
+**图 1-2**
+
+如果您第一次开始，您将收到信任开发人员的安全警告证书。当您信任该证书时，这些警告将不再发生。
+
+要停止应用程序，只需按Ctrl+C来发送取消命令。
+
+
+
+### 发布应用程序
+
+使用dotnet工具，您还可以创建NuGet包并发布要部署的应用程序。让我们首先创建一个依赖于框架的应用程序部署。这就减少了发布所需的文件的数量。
+
+使用先前创建的控制台应用程序，您只需要以下命令来创建要发布的文件。通过使用-f选择框架版本，并通过使用-c选择发布的配置：
+
+```bash
+ dotnet publish -f net5.0 -c Release
+```
+
+您将发布所需的文件放到bin/Release/net5.0/publish目录中。
+
+当您使用这些文件在目标系统上发布时，您还需要运行时。您可以在https://www.microsoft.com/net/download/上找到运行时下载和安装说明。
+
+> 注意：如果应用程序使用了额外的NuGet包，则需要在csproj文件中引用它们，并且库需要与应用程序一起交付。请阅读第14章以获取更多信息。
+
+
+
+### 独立部署（**Self-Contained Deployments**）
+
+应用程序不需要在目标系统上安装运行时，而是可以同时交付运行时。这被称为独立式部署
+
+根据应该安装应用程序的平台，运行时也会有所不同。因此，对于自包含部署，您需要通过在项目文件中指定运行时标识符来指定所支持的平台，如下项目文件所示。在这里，指定了Windows10、macOS和Ubuntu Linux的运行时标识符(项目文件SelfContainedHelloWorld/SelfContainedHelloWorld.csproj)：
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup>
+ <OutputType>Exe</OutputType>
+ <TargetFramework>net5.0</TargetFramework>
+ </PropertyGroup>
+ <PropertyGroup>
+ <RuntimeIdentifiers>
+ win10-x64;ubuntu-x64;osx.10.11-x64;
+ </RuntimeIdentifiers>
+ </PropertyGroup>
+</Project>
+```
+
+> 注意：从https://docs.microsoft.com/en-us/dotnet/core/rid-catalog的*.NET* *Core Runtime Identifier (RID)*目录中获取不同平台和版本的所有运行时标识符。
+
+现在，您可以为所有不同的平台创建发布文件：
+
+```bash
+ dotnet publish -c Release -r win10-x64
+```
+
+```bash
+ dotnet publish -c Release -r osx.10.11-x64
+```
+
+```bash
+ dotnet publish -c Release -r ubuntu-x64
+```
+
+运行这些命令后，您可以在Release/[win10-x64|osx.10.11-x64|ubuntu-x64]/publish目录中找到发布所需的文件。由于现在包括了.NET 5.0运行时，发布所需的文件的大小已经增加。在这些目录中，您还可以找到特定于平台的可执行文件，它们可以直接启动，而无需使用.NET CLI命令。
+
+> 注意：如果您运行的是一个安装了WSL 2的Windows系统，那么您可以直接在这个子系统中运行为Ubuntu创建的二进制映像。如果您在WSL中安装了.NET SDK，那么您还可以在子系统中启动构建和发布命令。
+
+
+
+### 创建单个可执行文件
+
+您可以创建单个可执行文件，而不是发布大量的文件列表。-p:PublishSingleFile=true将完整的运行时添加到一个二进制文件中，然后可以用于部署。使用以下命令，将为输出单目录创建单个文件。此目录还包含一个扩展名为pdb的文件。可以部署此文件以获取符号信息，以便在应用程序崩溃时进行分析。
+
+```bash
+ dotnet publish -r win10-x64 -p:PublishSingleFile=true --self-contained -o singlefile
+```
+
+
+
+### 准备运行
+
+为了加快应用程序的启动性能，应用程序的某些部分可以被预编译为本机代码。这样，IL编译器就可以在运行应用程序时减少它的工作。此选项可以与使用或不使用PublishSingleFile。
+
+```bash
+dotnet publish -r win10-x64 -p:PublishReadyToRun=true --self-contained -o readytorun
+```
+
+还可以在项目文件中指定<PublishReadyToRun>元素，而不是使用命令行传递此配置。
+
+
+
+### 应用程序裁剪
+
+当然，一个包含完整运行时的单个发布可执行文件是很大的。然而，也有一个办法可以解决这个问题。您可以裁剪应用程序不需要的所有类和方法，以使二进制文件更小。
+
+您可以在项目文件中使用已发布修剪的元素来指定裁剪。TrimMode指定应如何执行积极的裁剪。值link（在本例中使用）用于基于构件进行裁剪，并删除未使用的构件。当将值设置为 copyused时，如果应用程序使用它们的任何成员，则保留完整程序集：
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup>
+ <OutputType>Exe</OutputType>
+ <TargetFramework>net5.0</TargetFramework>
+ <RuntimeIdentifiers> win10-x64;ubuntu-x64;osx.10.11-x64;
+ </RuntimeIdentifiers>
+ <PublishTrimmed>true</PublishTrimmed>
+ <TrimMode>link</TrimMode>
+ </PropertyGroup>
+</Project>
+```
+
+您可以使用以下命令和以前的项目配置来创建要裁剪的单个可执行文件。在撰写这篇文章的时候，“Hello,World!”从54MB减少到2.8MB。这是相当令人印象深刻的。随着该功能的不断改进，预计在未来可能会有更多的节省。
+
+```bash
+dotnet publish -o publishtrimmed -p:PublishSingleFile=true --self-contained -r win10-x64
+```
+
+裁剪是有风险的。例如，如果应用程序使用了反射，则裁剪器在运行时没有意识到需要反射的成员。要处理此类问题，您可以指定不应该裁剪哪些程序集、类型和类型成员。要配置这样的选项，请阅读https://docs.microsoft.com/dotnet/core/deploying/trimming-options.上的详细文档
+
+
+
+## 总结
+
+本章介绍了回顾.NET的重要技术和变化的许多基础。对于新的应用程序，您应该使用.NET Core(现在只重命名为.net)来进行未来的开发。对于现有的应用程序，如果您更愿意继续使用旧技术或迁移到新技术，这取决于应用程序的状态。对于迁移到.net，您现在知道了可以用于替换旧框架的框架。
+
+您可以阅读关于可以用于开发的工具，并深入到.NET CLI来创建、构建和发布应用程序。
+
+您研究了访问数据库和创建Windows应用程序的技术，并阅读了创建web应用程序的不同方法。
+
+而这一章则以一个“Hello,World!”例如，第2章快速地学习了C#的语法。它涵盖了变量、如何实现程序流、如何将代码组织成名称空间等等。
