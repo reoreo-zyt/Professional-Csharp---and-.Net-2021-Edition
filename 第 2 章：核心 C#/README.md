@@ -478,5 +478,504 @@ short类型和ushort类型使用16位。short类型覆盖的范围从-32768到32
 
 ### 本机整数类型
 
-对于int、short和long，如果应用程序是一个32位或64位的应用程序，则比特数和可用大小是独立的。这与用C-++定义的整数定义不同。c#9对于特定于平台的值有了新的关键字：nint和nuint（分别是本机整数和本机无符号整数）。在64位应用程序中，这些整数类型使用64位，而在32位应用程序中，仅使用32位。这些类型对于直接内存访问非常重要，这在第13章“托管和非托管内存”中涉及。
+对于int、short和long，字节位取决于应用是32位还是64位的。这与用C++定义的整数不同。c#9对于特定于平台的值有了新的关键字：nint和nuint（分别是本机整数和本机无符号整数）。在64位应用程序中，这些整数类型使用64位，而在32位应用程序中，仅使用32位。这些类型对于直接内存访问非常重要，这在第13章“托管和非托管内存”中涉及。
+
+
+
+### 数字分隔符
+
+为了更好地提高数字的可读性，您可以使用数字分隔符。您可以向数字中添加下划线，如下的代码片段所示。在此代码片段中，0x前缀用于指定十六进制值(代码文件DataTypes/Program.cs)：
+
+```c#
+long l1 = 0x_123_4567_89ab_cedf;
+```
+
+作为分隔符使用的下划线只会被编译器忽略。这些分隔符有助于提高可读性，并且不添加任何功能。使用前面的示例，从右边读取，每16位（或4个十六进制字符）就会添加一个数字分隔符。与此相比，这更易读：
+
+```c#
+long l2 = 0x123456789abcedf;
+```
+
+当然，因为编译器忽略了下划线，所以您自己负责可读性。你可以把下划线放在任何位置，这可能对可读性没有真正的帮助：
+
+```c#
+long l3 = 0x_12345_6789_abc_ed_f;
+```
+
+使用任何位置都是很有用的，它允许不同的用例，例如使用十六进制或八进制值，或者分离协议所需的不同位，如下一节所示。
+
+
+
+### 二进制值
+
+除了提供数字分隔符外，c#还使为整数类型分配二进制值变得容易。使用0b文字，只允许分配0和1的值，如下(代码文件DataTypes/Program.cs)
+
+```c#
+uint binary1 = 0b_1111_1110_1101_1100_1011_1010_1001_1000;
+```
+
+前面的代码片段使用了一个有32位可用的无符号int。数字分隔符有助于提高使用二进制值的可读性。这个代码片段每4位分离一次。记住，你也可以用十六进制符号来写这个
+
+```c#
+uint hex1 = 0xfedcba98;
+```
+
+每3位使用分隔符有助于使用八进制表示法，其中字符在0（000二进制）和7（111二进制）之间使用。
+
+```c#
+uint binary2 = 0b_111_110_101_100_011_010_001_000;
+```
+
+如果您需要定义一个二进制协议—例如，2位定义最右边的部分，在下一节中定义6位，2乘以4位来完成16位—您可以按照这个协议放置分隔符：
+
+```c#
+ushort binary3 = 0b1111_0000_101010_11;
+```
+
+> 注意：有关使用二进制数据的其他信息，请阅读第5章。
+
+
+
+### 浮点类型
+
+c#还根据IEEE 754标准指定了具有不同位数的浮点类型。Half类型(.NET5的新类型)使用16位，float类型(对应.NET Single)使用32位，double类型（Double）使用64位。对于所有这些数据类型，符号都使用了1位。根据类型的不同，10到52位用于有效值，5到11位用于指数。详情如下表所示：
+
+| c#关键字 | .net类型      | 描述               | 有效位 | 指数位 |
+| -------- | ------------- | ------------------ | ------ | ------ |
+|          | System.Half   | 16位，单精度浮点数 | 10     | 5      |
+| float    | System.Single | 32位，单精度浮点数 | 23     | 8      |
+| double   | System.Double | 64位，双精度浮点数 | 52     | 11     |
+
+ 当您赋值时，如果您硬编码一个非整数（如12.3），编译器将假定它是double。要指定该值为float，请附加字符F（或f）：
+
+```c#
+float f = 12.3F;
+```
+
+对于decimal类型(.NET结构Demical)，.NET有一个高精度的浮点类型，使用128位，可用于财务计算。对于128位，1用于符号，96表示整数。其余的位指定了一个比例因子。要指定您的数字是decimal类型，而不是double float或者整数，您可以将M(或M)字符附加到该值中：
+
+```c#
+decimal d = 12.30M;
+```
+
+
+
+### 布尔类型
+
+您可以使用c# bool类型来包含true或false的布尔值。您不能隐式地将bool值与整数值转换。如果将变量（或函数返回类型）声明为bool，则只能使用true和false的值。如果你试图使用零表示false，使用非零值表示true，你会得到一个错误
+
+
+
+### 字符类型
+
+.NET字符串由两字节的字符组成。c#关键字char映射到.NET类型Char。使用单引号，例如`'A'`，将创建一个字符。使用双引号，将创建一个字符串。
+
+除了将字符表示为字符文字外，还可以用四位数十六进制Unicode值(例如`'\u0041'`）、带有强制类型转换的整数值（例如`(char)65`）或十六进制值（例如`'\x0041'`)）表示它们。您也可以用转义序列来表示它们，如下表所示：
+
+| 转义序列 | 字符       |
+| -------- | ---------- |
+| `\'`     | 单引号     |
+| `\''`    | 双引号     |
+| `\\`     | 反斜杠     |
+| `\0`     | 空         |
+| `\a`     | 警告       |
+| `\b`     | 退格       |
+| `\f`     | 换页       |
+| `\n`     | 换行       |
+| `\r`     | 回车       |
+| `\t`     | 水平制表符 |
+| `\v`     | 垂直制表符 |
+
+
+
+### 数字的字面值
+
+在前面的章节中，已经展示了数字的字面值。让我们在下表中总结一下它们：
+
+| 字面值 | 位置 | 说明                         |
+| ------ | ---- | ---------------------------- |
+| U      | 后缀 | 无符号int                    |
+| L      | 后缀 | long                         |
+| UL     | 后缀 | 无符号long                   |
+| F      | 后缀 | float                        |
+| M      | 后缀 | decimal                      |
+| 0x     | 前缀 | 十六进制数；允许有从0到F的值 |
+| 0b     | 前缀 | 二进制数；只允许使用0和1     |
+| true   | NA   | 布尔值                       |
+| false  | NA   | 布尔值                       |
+
+
+
+### 对象类型
+
+除了值类型，c#关键字还定义了两个引用类型：映射到Object类的object关键字和映射到String类的string关键字。string类型将在本章后面的“使用字符串”一节中讨论。Object类是所有引用类型的根类型，可用于两个目的：
+
+➤ 您可以使用object引用来绑定任何特定子类型的对象。例如，在第5章中，您将看到如何使用object类型把堆栈中的值对象装箱，再移动到堆中。object引用在反射中也很有用，此时必须有代码处理类型未知的对象。
+
+➤ 对象类型实现了许多基本的通用方法，其中包括Equals、GetHashCode、GetType和ToString。用户定义的类需要使用一种面向对象技术——重写，这将在第4章中讨论。例如，当您重写ToString时，您为类配备了一种智能地提供自身的字符串表示的方法。如果您没有在类中为这些方法提供您自己的实现，那么编译器将获取object类型的实现。
+
+
+
+## 控制程序流
+
+本节将介绍该语言最基本的重要语句：允许您控制程序流程的语句，而不是按照它在程序中出现的顺序执行每行代码。使用if和switch语句等条件语句，您可以根据是否满足某些条件对代码进行分支。您可以使用for、while和foreach语句在循环中执行重复语句。
+
+
+
+### if 语句
+
+使用if语句，您可以在圆括号内指定一个表达式。如果表达式返回true，则执行用花括号指定的块的代码。如果条件不为真，您可以使用else if来检查其他条件是否为真。else if可以重复检查更多的条件。如果if指定的表达式和所有else if表达式均不计算为true，则执行else块的代码。
+
+使用以下代码片段，将从控制台读取一个字符串。如果输入了空字符串，则将调用if语句后面的代码块。string的方法IsNullOrEmpty在string是null或空值时返回true。当输入的长度小于5个字符时，调用使用else if语句指定的块。在所有其他情况下，例如，输入长度为5个或更多字符，将调用else块(代码文件ProgramFlow/Program.cs)：
+
+```c#
+Console.WriteLine("Type in a string");
+string? input = Console.ReadLine();
+
+if (string.IsNullOrEmpty(input))
+{
+ Console.WriteLine("You typed in an empty string.");
+}
+else if (input?.Length < 5)
+{
+ Console.WriteLine("The string had less than 5 characters.");
+}
+else
+{
+ Console.WriteLine("Read any other string");
+}
+Console.WriteLine("The string was " + input);
+```
+
+> 注意：对于if语句，如果条件分支只有一句，则不需要使用花括号；
+
+使用if语句，else if和else是可选的。如果您只需要基于一个条件调用代码块，而如果不满足这个条件不调用代码块，则可以只使用if。
+
+
+
+### 模式匹配运算符
+
+> [模式 - C# 参考 | Microsoft Docs](https://docs.microsoft.com/zh-cn/dotnet/csharp/language-reference/operators/patterns)
+
+c#特性之一是模式匹配，您可以将它与if语句和is运算符一起使用。前面的部分“可空引用类型”包含了一个使用if语句和`is not null`的示例。
+
+下面的代码片段将接收到的object类型的值与null比较，使用null在常量模式下比较参数，并抛出ArgumentNullException。else if中，类型模式用于检查变量o是否为Book类型。如果是这样，则将变量o分配给变量b。因为变量b是Book类型，所以使用b可以访问由Book类型指定的Title属性(代码文件ProgramFlow/Program.cs)：
+
+```c#
+void PatternMatching(object o)
+{
+ if (o is null) throw new ArgumentNullException(nameof(o));
+ else if (o is Book b)
+ {
+ Console.WriteLine($"received a book: {b.Title}");
+ }
+}
+```
+
+> 注意：在本例中，为了抛出ArgumentNullException，我们使用了nameof表达式。nameof表达式获取参数的名称，例如，变量o，并将其作为字符串传递。throw new ArgumentNullException(nameof(o))；解析为与 throw new ArgumentNullException("o")相同的代码。但是，如果将变量o重命名为不同的值，则重构功能可以自动重命名使用nameof表达式指定的变量。如果在重命名变量时没有更改nameof的参数，则会导致一个编译器错误。如果没有nameof表达式，变量和字符串不容易同步。
+
+下面的代码片段中显示了关于常数和类型模式的更多示例：
+
+```c#
+if (o is 42) // const pattern
+if (o is "42") // const pattern
+if (o is int i) // type pattern
+```
+
+> 注意：可以使用与is运算符、swich语句和switch表达式匹配的模式匹配。您可以使用不同类别的模式匹配。本章仅涵盖常量、类型、关系模式和模式组合符。更多的模式，如属性模式，元组模式，和递归模式将在第三章提及。
+
+
+
+### switch 语句
+
+switch/case语句可用于从一组互斥的分支中选择一个分支执行。它采用了switch关键字包含参数的形式，后面接上一系列case子句。当switch参数中的表达式的计算结果为case子句指定的值之一时，case子句后面的代码将被执行。不需要使用花括号将case语句连接成块；另外，您需要使用break语句标记每个大小写的代码末尾。您还可以在switch语句中包含默认情况，如果表达式不计算其他任何情况，则执行。以下switch语句测试x变量的值（代码文件SwitchStatement/Program.cs）：
+
+```c#
+    switch (x)
+    {
+        case 1:
+            Console.WriteLine("integerA = 1");
+            break;
+        case 2:
+            Console.WriteLine("integerA = 2");
+            break;
+        case 3:
+            Console.WriteLine("integerA = 3");
+            break;
+        default:
+            Console.WriteLine("integerA is not 1, 2, or 3");
+            break;
+    }
+```
+
+请注意，case值必须是常量表达式；不允许使用变量。
+
+使用switch语句，可以使用goto在case之间跳转，但必须要有break跳出switch语句，如下：
+
+```c#
+goto case 3;
+```
+
+如果实现与多个case完全相同，则可以在指定实现之前指定多个case：
+
+```c#
+switch(country)
+{
+ case "au":
+ case "uk":
+ case "us":
+ language = "English";
+ break;
+ case "at":
+ case "de":
+ language = "German";
+ break;
+}
+```
+
+
+
+### 使用switch语句的模式匹配
+
+模式匹配也可以与switch语句一起使用。下面的代码片段显示了常量、类型以及关系模式。方法SwitchWithPatternMatching接收一个object类型的参数。case null是一个常数模式，比较o是否为null。在接下来的三种情况下，我们指定了一个类型模式。`case int i`使用一个类型模式来创建变量i（如果变量o是int类型），与when子句结合使用。when子句使用一个关系模式来检查它是否大于42。下一个示例匹配所有剩余的int类型。程序中，没有指定应该分配的对象o的变量。如果不需要这个变量，只需要知道它是这种类型，而不需要指定变量。当与Book类型匹配时，将使用变量b。在这里声明一个变量，此变量的类型为Book(代码文件SwitchStatement/Program.cs)
+
+```c#
+void SwitchWithPatternMatching(object o)
+{
+ switch (o)
+ {
+ case null:
+ 	Console.WriteLine("const pattern with null");
+	break;
+ case int i when i > 42
+ 	Console.WriteLine("type pattern with when and a relational pattern");
+     break;
+ case int:
+ 	Console.WriteLine("type pattern with an int");
+ 	break;
+ case Book b:
+ 	Console.WriteLine($"type pattern with a Book {b.Title}");
+ 	break;
+ default:
+ 	break;
+ }
+}
+```
+
+
+
+### switch表达式
+
+下一个示例显示了一个基于枚举类型的switch。枚举类型基于不同的命名的整数。TrafficLight类型定义了交通灯颜色的不同值（代码文件SwitchExpression/Program.cs）：
+
+```c#
+enum TrafficLight
+{
+ Red,
+ Amber,
+ Green
+}
+```
+
+> 注意：第3章更详细地介绍了枚举类型，您可以看到更改基类型和分配不同值。
+
+到目前为止，对于switch语句，您只看到在每种情况下都调用了一些操作。当您使用返回语句从一个方法返回时，您还可以直接从该case下返回一个值，而无需继续使用以下cases。方法NextLightClassic接收一个TrafficLight及其参数，并返回一个TrafficLight的参数。如果通过的交通灯的值为TrafficLight.Green，该方法返回TrafficLight.Amber。当当前指示灯值为TrafficLight.Amber，返回TrafficLight.Red：
+
+```c#
+TrafficLight NextLightClassic(TrafficLight light) 
+{
+ switch (light)
+ {
+ case TrafficLight.Green:
+ 	return TrafficLight.Amber;
+ case TrafficLight.Amber:
+ 	return TrafficLight.Red;
+ case TrafficLight.Red:
+ 	return TrafficLight.Green;
+ default:
+ 	throw new InvalidOperationException(); 
+ }
+}
+```
+
+在这种情况下，如果您需要根据不同的选项返回一个值，则可以使用c#8中新的switch表达式。方法NextLight接收并返回与前面显示的方法类似的TrafficLight值。`=>` 标记用于定义返回的内容，而不是使用case关键字。该功能与以前相同，但您只需要更少的代码行：
+
+```c#
+TrafficLight NextLight(TrafficLight light) =>
+ light switch
+ {
+  TrafficLight.Green => TrafficLight.Amber,
+  TrafficLight.Amber => TrafficLight.Red,
+  TrafficLight.Red => TrafficLight.Green,
+  _ => throw new InvalidOperationException()
+ };
+```
+
+如果枚举类型通过使用static指令导入，则可以通过使用不带类型名称的枚举值定义来进一步简化实现：
+
+```c#
+using static TrafficLight;
+TrafficLight NextLight(TrafficLight light) =>
+ light switch
+ {
+ Green => Amber,
+ Amber => Red,
+ Red => Green,
+ _ => throw new InvalidOperationException()
+ };
+```
+
+> 注意：还有其他选项需要属性模式或基于元组的模式匹配。这一点详见第3章。
+
+在下一个例子中，使用了多个模式。首先，从控制台检索输入。如果输入字符串1或两个，则使用相同的匹配，使用or组合模式(代码文件SwitchExpression/Program.cs)
+
+```c#
+string? input = Console.ReadLine();
+string result = input switch
+{
+ "one" => "the input has the value one",
+ "two" or "three" => "the input has the value two or three",
+ _ => "any other value"
+};
+```
+
+使用模式组合，您可以使用and，or，和not关键字。
+
+
+
+### for循环
+
+c#提供了四种不同的循环（for, while, do-while, 和 foreach），使您能够重复执行一个代码块，直到满足某个条件。使用for关键字，您遍历一个循环，在执行另一个迭代之前，判定一个特定条件是否为真：
+
+```c#
+for (int i = 0; i < 100; i++)
+{
+ Console.WriteLine(i);
+}
+```
+
+for语句的第一个表达式是初始化器。在执行第一个循环之前，将对其进行计算。通常，您使用它来初始化一个本地变量作为一个循环计数器。
+
+第二个表达式是条件。这将在for块的每次迭代之前进行检查。如果此表达式的计算结果为true，则会执行该块。如果计算结果为false，for语句将结束，程序将在关闭for主体的花括号之后继续使用下一个语句。
+
+在执行主体之后，将计算第三个表达式，即迭代器。通常，您会增加循环计数器。使用i++，给变量i加一个值1。在第三个表达式之后，再次计算条件表达式，以检查是否应该使用for块进行另一次迭代。
+
+for循环是一个所谓的预测试循环，因为循环条件是在执行循环语句之前计算的；因此，如果循环条件为false，那么循环的内容将根本不会被执行。
+
+嵌套循环并不罕见，内部循环会完全执行一次外环的每次迭代。这种方法通常用于循环遍历多维数组中的每个元素。
+
+```c#
+// This loop iterates through rows
+for (int i = 0; i < 100; i += 10)
+{
+ // This loop iterates through columns
+ for (int j = i; j < i + 10; j++)
+ {
+ Console.Write($" {j}");
+ }
+ Console.WriteLine();
+}
+```
+
+此示例的输出结果如下：
+
+```bash
+0 1 2 3 4 5 6 7 8 9
+10 11 12 13 14 15 16 17 18 19
+20 21 22 23 24 25 26 27 28 29
+30 31 32 33 34 35 36 37 38 39
+40 41 42 43 44 45 46 47 48 49
+50 51 52 53 54 55 56 57 58 59
+60 61 62 63 64 65 66 67 68 69
+70 71 72 73 74 75 76 77 78 79
+80 81 82 83 84 85 86 87 88 89
+90 91 92 93 94 95 96 97 98 99
+```
+
+
+
+### while 循环
+
+就像for循环一样，而它是一个预测循环。语法很相似，但是while循环只需要一个表达式：
+
+```c#
+while(condition)
+ statement(s);
+```
+
+与for循环不同，while循环最常用于重复一个语句或一个语句块。通常，while循环体中的一个语句会将一个布尔标志设置为false，从而触发循环的结束，如下例所示：
+
+```c#
+bool condition = false;
+while (!condition)
+{
+ // This loop spins until the condition is true.
+ DoSomeWork();
+ condition = CheckCondition(); // assume CheckCondition() returns a bool
+}
+```
+
+
+
+### do-while 循环
+
+do-while循环是while循环的后测试版本。这意味着在循环主体执行之后再评估循环的测试条件。因此，do-while循环适用于循环体至少执行一次的情况：
+
+```c#
+bool condition;
+do
+{
+ // This loop will at least execute once, even if the condition is false.
+ MustBeCalledAtLeastOnce();
+ condition = CheckCondition();
+} while (condition);
+```
+
+
+
+### foreach 循环
+
+foreach循环允许您遍历集合中的每个项。现在，不要担心一个集合到底是什么（它在第6章“数组”中有了充分的解释）；只是要理解它是一个表示对象列表的对象。严格来说，对象要算作集合，它必须支持一个名为IEnumble的接口。集合的示例包括c#数组、System.Collections命名空间和用户定义的集合类。arrayOfInts是int数组的一个集合类。
+
+```c#
+foreach (int temp in arrayOfInts)
+{
+ Console.WriteLine(temp);
+}
+```
+
+在这里，foreach每次一步一步地通过数组中的一个元素。对于每个元素，它将元素的值放置在名为temp的int型变量中，然后执行循环的迭代。
+
+这里是您可以使用类型推断的另一种情况。foreach循环将变成以下内容：
+
+```c#
+foreach (var temp in arrayOfInts)
+{
+ // ...
+}
+```
+
+int将从临时项中进行推断，因为这是集合项的类型。
+
+foreach需要注意的重要一点是，您不能更改集合中项的值（前面代码中的临时值），因此下面的代码将不会编译：
+
+```c#
+foreach (int temp in arrayOfInts)
+{
+ temp++;
+ Console.WriteLine(temp);
+}
+```
+
+如果需要遍历集合中的项并更改它们的值，则必须使用for循环。
+
+
+
+### 退出循环
+
+在循环中，您可以使用break语句停止迭代，或者结束当前迭代，并使用continue语句继续下一个迭代。使用return语句，您可以退出当前方法，因此也可以退出循环。
+
+
+
+## 具有命名空间的组织
 
